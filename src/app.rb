@@ -152,12 +152,22 @@ class FindMeABook < Sinatra::Base
       return response     
     end
       
-    #Serve the homepage
-    #
+    # Serve the homepage
     get "/" do
       erb :home
     end  
     
+    # A simple web service to perform a title lookup on the BNB
+    # Responds to GET requests to /title and expects an isbn parameter
+    # to be provided
+    #
+    # The code executes a SPARQL query (see FIND_TITLE) against the BNB to fetch the first
+    # matching title
+    #
+    # The response is a simple JSON document that includes either a "title"
+    # value (if the title is found) or an "error" value if not.
+    #
+    # Example call: http://findmeabook.herokuapp.com/title?isbn=0261102214
     get "/title" do
       isbn = params[:isbn]
       if isbn == nil || isbn == ""
@@ -182,7 +192,17 @@ class FindMeABook < Sinatra::Base
       return response.to_json           
     end
     
-    #Find other books by an author(s)
+    # A simple web service to find more books by an author in the BNB. The 
+    # service responds to GET requests to /by-author and expects an isbn parameter
+    # to be provided
+    #
+    # The code executes a SPARQL query (see FIND_BOOKS_BY_AUTHOR) to 
+    # find the books
+    #
+    # The response is a JSON document that contains the ISBN searched for
+    # and an array of results. Each result will have a title and an ISBN
+    #
+    # Example call: http://findmeabook.herokuapp.com/by-author?isbn=0261102214
     get "/by-author" do
       isbn = params[:isbn]
       if isbn == nil || isbn == ""
@@ -195,7 +215,21 @@ class FindMeABook < Sinatra::Base
       return response.to_json
     end
 
-    #Recommend some related books, either by series or category    
+    # A simple web service to related books in the BNB. The 
+    # service responds to GET requests to /related and expects an isbn parameter
+    # to be provided
+    #
+    # The code first attempts to execute a SPARQL query to see if the book is in a
+    # series. If it is then other books in that series are used as recommendations
+    # (see FIND_RELATED_BY_SERIES)
+    #
+    # The code falls back to finding other books in the same category if a series
+    # can't be found. See FIND_RELATED_BY_CATEGORY
+    #
+    # The response is a JSON document that contains the ISBN searched for
+    # and an array of results. Each result will have a title and an ISBN
+    #
+    # Example call: http://findmeabook.herokuapp.com/related?isbn=0261102214
     get "/related" do      
       isbn = params[:isbn]
       if isbn == nil || isbn == ""
