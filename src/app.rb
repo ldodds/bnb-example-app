@@ -172,7 +172,7 @@ class FindMeABook < Sinatra::Base
       #execute the query and build JSON response  
       results = sparql.query(query)      
       response = { :isbn => isbn }
-      puts results.inspect
+
       if results.length > 0
         response[:title] = results.first[:title]
       else
