@@ -41,7 +41,7 @@ class FindMeABook < Sinatra::Base
       PREFIX dct: <http://purl.org/dc/terms/>
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>    
       
-      SELECT ?otherTitle ?otherIsbn WHERE {
+      SELECT DISTINCT ?otherTitle ?otherIsbn WHERE {
         ?book bibo:isbn10 "?isbn";
           dct:creator ?author;
           dct:title ?title.
